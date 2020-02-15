@@ -1,0 +1,2 @@
+include ':app', ':searchlibrary'
+rootProject.name='FrhSearchbar'
