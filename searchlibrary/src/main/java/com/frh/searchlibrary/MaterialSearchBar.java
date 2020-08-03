@@ -54,6 +54,8 @@ public class MaterialSearchBar extends FrameLayout implements View.OnClickListen
     private CardView searchBarCardView;
     private LinearLayout inputContainer;
     private ImageView navIcon;
+    public ImageView mtSearchBlack;
+
     private ImageView menuIcon;
     private ImageView searchIcon;
     private ImageView arrowIcon;
@@ -185,6 +187,7 @@ public class MaterialSearchBar extends FrameLayout implements View.OnClickListen
         placeHolder = findViewById(R.id.mt_placeholder);
         inputContainer = findViewById(R.id.inputContainer);
         navIcon = findViewById(R.id.mt_nav);
+        mtSearchBlack = findViewById(R.id.mt_search_black);
         findViewById(R.id.mt_clear).setOnClickListener(this);
 
         //Listeners
@@ -194,6 +197,7 @@ public class MaterialSearchBar extends FrameLayout implements View.OnClickListen
         searchEdit.setOnFocusChangeListener(this);
         searchEdit.setOnEditorActionListener(this);
         navIcon.setOnClickListener(this);
+        mtSearchBlack.setOnClickListener(this);
 
         postSetup();
 
@@ -928,11 +932,18 @@ public class MaterialSearchBar extends FrameLayout implements View.OnClickListen
                 onSearchActionListener.onButtonClicked(button);
             }
         }
+//        else if (id==R.id.mt_search_black){
+//            onSearchBlackClicked();
+//        }
     }
 
     @Override
     public void onAnimationStart(Animation animation) {
     }
+
+//    public void onSearchBlackClicked(View.OnClickListener()) {
+//        mtSearchBlack.setOnClickListener(this);
+//    }
 
     @Override
     public void onAnimationEnd(Animation animation) {

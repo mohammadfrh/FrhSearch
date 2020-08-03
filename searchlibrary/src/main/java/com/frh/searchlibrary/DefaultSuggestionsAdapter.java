@@ -1,10 +1,13 @@
 package com.frh.searchlibrary;
 
+import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -19,7 +22,7 @@ public class DefaultSuggestionsAdapter extends SuggestionsAdapter<String, Defaul
         super(inflater);
     }
 
-    public void setListener(SuggestionsAdapter.OnItemViewClickListener listener) {
+    public void setListener(SuggestionsAdapter.OnItemViewClickListener listener ) {
         this.listener = listener;
     }
 
@@ -37,6 +40,21 @@ public class DefaultSuggestionsAdapter extends SuggestionsAdapter<String, Defaul
     @Override
     public void onBindSuggestionHolder(String suggestion, SuggestionHolder holder, int position) {
         holder.text.setText(getSuggestions().get(position));
+
+        //        if(position == getItemCount.size()) {
+//            holder.button.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    Toast.makeText(context, "Button Clicked", Toast.LENGTH_LONG).show();
+//                }
+//            });
+//        }
+//        else {
+//            final String name = myItems.get(position);
+//            holder.title.setText(name);
+//        }
+
+
     }
 
     public interface OnItemViewClickListener {
@@ -72,4 +90,6 @@ public class DefaultSuggestionsAdapter extends SuggestionsAdapter<String, Defaul
             });
         }
     }
+
+
 }
