@@ -26,7 +26,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="end"
+            android:gravity="start"
+            android:layout_marginStart="30dp"
             android:orientation="vertical">
 
             <TextView
@@ -43,7 +44,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
                 android:gravity="end"
-                android:text="تهران"
+                android:text="active stroller"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="#919194"
                 android:textSize="10sp" />

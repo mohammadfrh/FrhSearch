@@ -3,16 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".MainActivity"
     android:id="@+id/searchview"
+    android:background="#000000"
     android:layout_weight="100">
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="110dp"
-        android:background="@color/white"/>
+
 
     <com.frh.searchlibrary.MaterialSearchBar
         android:id="@+id/search_bar"
@@ -22,9 +20,9 @@
         android:layout_marginRight="20dp"
         android:layout_marginTop="50dp"
         android:layoutDirection="ltr"
-        app:mt_navIconEnabled="true"
+        app:mt_navIconEnabled="false"
         android:scrollbars="vertical"
-        app:mt_placeholder="جستجو ..."
+        app:mt_placeholder="Search Malls"
         app:mt_placeholderColor="#656567"
         app:mt_roundedSearchBarEnabled="false"
         app:layout_constrainedWidth="true"
@@ -42,6 +40,7 @@
         android:layout_below="@+id/search_bar"
         android:background="@drawable/shadow_background_images"
         android:gravity="center"
+        android:visibility="gone"
         android:orientation="horizontal"
         android:weightSum="6">
 
@@ -151,6 +150,7 @@
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/linear_items"
         android:gravity="center"
+        android:visibility="gone"
         android:background="@drawable/shape_bottom_expand">
 
         <View

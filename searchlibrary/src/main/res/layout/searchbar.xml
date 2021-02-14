@@ -70,7 +70,7 @@
                     android:focusable="true"
                     android:padding="12dp"
                     android:src="@drawable/ic_arrow_left_black_48dp"
-                    android:visibility="visible" />
+                    android:visibility="gone" />
 
                 <EditText
                     android:id="@+id/mt_editText"
@@ -118,7 +118,7 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:scaleType="center"
-                android:visibility="visible"
+                android:visibility="gone"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_white_search_24" />
