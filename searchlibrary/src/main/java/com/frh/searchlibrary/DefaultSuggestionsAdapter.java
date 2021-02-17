@@ -7,16 +7,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-/**
- * Created by mancj on 27.01.17.
- */
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.bumptech.glide.request.RequestOptions;
 
 public class DefaultSuggestionsAdapter extends SuggestionsAdapter<String, DefaultSuggestionsAdapter.SuggestionHolder> {
+
     private SuggestionsAdapter.OnItemViewClickListener listener;
+    private Context context;
 
     public DefaultSuggestionsAdapter(LayoutInflater inflater) {
         super(inflater);
@@ -34,27 +35,21 @@ public class DefaultSuggestionsAdapter extends SuggestionsAdapter<String, Defaul
     @Override
     public DefaultSuggestionsAdapter.SuggestionHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = getLayoutInflater().inflate(R.layout.item_last_request, parent, false);
+        context= parent.getContext();
         return new DefaultSuggestionsAdapter.SuggestionHolder(view);
     }
 
     @Override
     public void onBindSuggestionHolder(String suggestion, SuggestionHolder holder, int position) {
-        holder.text.setText(getSuggestions().get(position));
+        holder.title.setText(getSuggestions().get(position));
+        holder.description.setText(getDescriptions().get(position));
 
-        //        if(position == getItemCount.size()) {
-//            holder.button.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                    Toast.makeText(context, "Button Clicked", Toast.LENGTH_LONG).show();
-//                }
-//            });
-//        }
-//        else {
-//            final String name = myItems.get(position);
-//            holder.title.setText(name);
-//        }
+        Glide.with(context)
+                .load(getUrls().get(position))
+                .apply(RequestOptions.bitmapTransform(new RoundedCorners(14)))
+                .into(holder.imageView);
 
-
+        Log.d("TAG", "onBindSuggestionHolder: " + getUrls().get(position));
     }
 
     public interface OnItemViewClickListener {
@@ -64,13 +59,21 @@ public class DefaultSuggestionsAdapter extends SuggestionsAdapter<String, Defaul
     }
 
     class SuggestionHolder extends RecyclerView.ViewHolder {
-        private final TextView text;
+        private final TextView title;
+        private final TextView description;
         private final ImageView iv_delete;
+        private final ImageView imageView;
+
+
 
         public SuggestionHolder(final View itemView) {
             super(itemView);
-            text = itemView.findViewById(R.id.text);
+            title = itemView.findViewById(R.id.title);
+            description = itemView.findViewById(R.id.description);
             iv_delete = itemView.findViewById(R.id.iv_delete);
+            imageView = itemView.findViewById(R.id.imageView);
+
+
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

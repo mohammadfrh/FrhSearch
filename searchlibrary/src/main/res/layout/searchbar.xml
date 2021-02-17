@@ -1,175 +1,183 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:ignore="ContentDescription">
+<layout>
+    <merge xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        tools:ignore="ContentDescription">
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/mt_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        app:cardBackgroundColor="#DAD8D8"
-        app:cardElevation="2dp"
-        android:elevation="20dp"
-        app:cardPreventCornerOverlap="false">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/root"
+        <androidx.cardview.widget.CardView
+            android:id="@+id/searchbar_cardview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:scrollbars="vertical">
+            android:layout_centerHorizontal="true"
+            app:cardBackgroundColor="#DAD8D8"
+            app:cardElevation="2dp"
+            android:elevation="20dp"
+            app:cardPreventCornerOverlap="false">
 
-            <ImageView
-                android:id="@+id/mt_menu"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:clickable="true"
-                android:focusable="true"
-                android:padding="12dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/ic_dots_vertical_black_48dp"
-                android:visibility="gone"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/mt_placeholder"
-                android:layout_width="0dp"
-                android:layout_height="48dp"
-                android:fontFamily="sans-serif"
-                android:gravity="center_vertical"
-                android:maxLines="1"
-                android:textColor="#8A000000"
-                android:textStyle="bold"
-                android:visibility="visible"
-                app:layout_constraintEnd_toStartOf="@id/mt_search"
-                app:layout_constraintStart_toEndOf="@+id/mt_nav"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_goneMarginStart="16dp"
-                tools:text="PlaceHolder" />
-
-            <LinearLayout
-                android:id="@+id/inputContainer"
-                android:layout_width="0dp"
-                android:layout_height="48dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:visibility="gone"
-                app:layout_constraintEnd_toStartOf="@+id/mt_menu"
-                app:layout_constraintStart_toEndOf="@+id/mt_nav"
-                app:layout_constraintTop_toTopOf="parent">
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/root"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scrollbars="vertical">
 
                 <ImageView
-                    android:id="@+id/mt_arrow"
+                    android:id="@+id/imageView_menu"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
-                    android:background="?attr/selectableItemBackground"
+                    android:background="?attr/selectableItemBackgroundBorderless"
                     android:clickable="true"
                     android:focusable="true"
                     android:padding="12dp"
-                    android:src="@drawable/ic_arrow_left_black_48dp"
-                    android:visibility="gone" />
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_dots_vertical_black_48dp"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-                <EditText
-                    android:id="@+id/mt_editText"
+                <TextView
+                    android:id="@+id/textView_placeholder"
                     android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginRight="8dp"
-                    android:layout_weight="1"
-                    android:background="@android:color/transparent"
-                    android:hint="search"
-                    android:imeOptions="flagNoExtractUi|actionSearch"
-                    android:inputType="text"
-                    android:backgroundTint="@color/colorPrimary"
+                    android:layout_height="48dp"
+                    android:fontFamily="sans-serif"
+                    android:gravity="center_vertical"
                     android:maxLines="1"
-                    android:textAppearance="?android:attr/textAppearanceMedium" />
+                    android:textColor="#8A000000"
+                    android:textStyle="bold"
+                    android:visibility="visible"
+                    app:layout_constraintEnd_toStartOf="@id/imageView_search"
+                    app:layout_constraintStart_toEndOf="@+id/imageView_circle_search"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_goneMarginStart="16dp"
+                    tools:text="PlaceHolder" />
+
+                <LinearLayout
+                    android:id="@+id/search_open_container"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toStartOf="@+id/imageView_menu"
+                    app:layout_constraintStart_toEndOf="@+id/imageView_circle_search"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <ImageView
+                        android:id="@+id/imageView_back_arrow"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:background="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:padding="12dp"
+                        android:src="@drawable/ic_arrow_left_black_48dp"
+                        android:visibility="gone" />
+
+                    <EditText
+                        android:id="@+id/editText_search"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginRight="8dp"
+                        android:layout_weight="1"
+                        android:background="@android:color/transparent"
+                        android:hint="search"
+                        android:imeOptions="flagNoExtractUi|actionSearch"
+                        android:inputType="text"
+                        android:backgroundTint="@color/colorPrimary"
+                        android:maxLines="1"
+                        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                    <ProgressBar
+                        android:id="@+id/progressbar"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:padding="12dp"
+                        android:visibility="gone"
+                        android:theme="@style/ProgressBarTheme"/>
+
+                    <ImageView
+                        android:id="@+id/imageView_clear_search"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:background="?selectableItemBackgroundBorderless"
+                        android:padding="12dp"
+                        android:src="@drawable/ic_close_black_48dp" />
+
+                </LinearLayout>
 
                 <ImageView
-                    android:id="@+id/mt_clear"
+                    android:id="@+id/imageView_circle_search"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="@drawable/background_circle_search"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:scaleType="center"
+                    android:visibility="gone"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_white_search_24" />
+
+                <ImageView
+                    android:id="@+id/imageView_search_black"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="@drawable/background_circle_search"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:scaleType="center"
+                    android:visibility="gone"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_white_search_24" />
+
+
+                <RelativeLayout
+                    android:id="@+id/last"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="48dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <View
+                        android:id="@+id/view_divider"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#1F000000"
+                        android:visibility="gone" />
+
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/mt_recycler"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:scrollbars="vertical"
+                        />
+
+                </RelativeLayout>
+
+                <ImageView
+                    android:id="@+id/imageView_search"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:background="?selectableItemBackgroundBorderless"
+                    android:clickable="false"
                     android:padding="12dp"
-                    android:src="@drawable/ic_close_black_48dp" />
-
-            </LinearLayout>
-
-            <ImageView
-                android:id="@+id/mt_nav"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:background="@drawable/background_circle_search"
-                android:clickable="true"
-                android:focusable="true"
-                android:scaleType="center"
-                android:visibility="gone"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_white_search_24" />
-
-            <ImageView
-                android:id="@+id/mt_search_black"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:background="@drawable/background_circle_search"
-                android:clickable="true"
-                android:focusable="true"
-                android:scaleType="center"
-                android:visibility="gone"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_white_search_24" />
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_magnify_black_48dp"
+                    android:visibility="visible"
+                    app:layout_constraintEnd_toStartOf="@+id/imageView_menu"
+                    app:layout_constraintTop_toTopOf="parent" />
 
 
-            <RelativeLayout
-                android:id="@+id/last"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="48dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <View
-                    android:id="@+id/mt_divider"
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="#1F000000"
-                    android:visibility="gone" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/mt_recycler"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:scrollbars="vertical"
-                    app:layout_constrainedHeight="true" />
+        </androidx.cardview.widget.CardView>
 
 
-
-            </RelativeLayout>
-
-            <ImageView
-                android:id="@+id/mt_search"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:background="?selectableItemBackgroundBorderless"
-                android:clickable="false"
-                android:padding="12dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/ic_magnify_black_48dp"
-                android:visibility="visible"
-                app:layout_constraintEnd_toStartOf="@+id/mt_menu"
-                app:layout_constraintTop_toTopOf="parent" />
-
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-    </androidx.cardview.widget.CardView>
-
-
-</merge>
+    </merge>
+</layout>

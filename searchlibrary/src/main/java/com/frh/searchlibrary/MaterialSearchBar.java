@@ -10,6 +10,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.text.BoringLayout;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -26,13 +27,17 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.appcompat.widget.PopupMenu;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
+import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.frh.searchlibrary.databinding.SearchbarBinding;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -40,9 +45,6 @@ import java.util.List;
 
 import static android.content.ContentValues.TAG;
 
-/**
- * Created by mancj on 19.07.2016.
- */
 public class MaterialSearchBar extends FrameLayout implements View.OnClickListener,
         Animation.AnimationListener, SuggestionsAdapter.OnItemViewClickListener,
         View.OnFocusChangeListener, TextView.OnEditorActionListener {
@@ -51,18 +53,9 @@ public class MaterialSearchBar extends FrameLayout implements View.OnClickListen
     public static final int BUTTON_BACK = 3;
     public static final int VIEW_VISIBLE = 1;
     public static final int VIEW_INVISIBLE = 0;
-    private CardView searchBarCardView;
-    private LinearLayout inputContainer;
-    private ImageView navIcon;
-    public ImageView mtSearchBlack;
 
-    private ImageView menuIcon;
-    private ImageView searchIcon;
-    private ImageView arrowIcon;
-    private ImageView clearIcon;
-    private EditText searchEdit;
-    private TextView placeHolder;
-    private View suggestionDivider;
+    SearchbarBinding binding;
+
     private OnSearchActionListener onSearchActionListener;
     private boolean searchOpened;
     private boolean suggestionsVisible;
@@ -124,7 +117,7 @@ public class MaterialSearchBar extends FrameLayout implements View.OnClickListen
     }
 
     private void init(AttributeSet attrs) {
-        inflate(getContext(), R.layout.searchbar, this);
+        binding = DataBindingUtil.inflate(LayoutInflater.from(getContext()), R.layout.searchbar, this, true);
 
         TypedArray array = getContext().obtainStyledAttributes(attrs, R.styleable.MaterialSearchBar);
 
@@ -175,75 +168,45 @@ public class MaterialSearchBar extends FrameLayout implements View.OnClickListen
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         array.recycle();
-
-        //View References
-        searchBarCardView = findViewById(R.id.mt_container);
-        suggestionDivider = findViewById(R.id.mt_divider);
-        menuIcon = findViewById(R.id.mt_menu);
-        clearIcon = findViewById(R.id.mt_clear);
-        searchIcon = findViewById(R.id.mt_search);
-        arrowIcon = findViewById(R.id.mt_arrow);
-        searchEdit = findViewById(R.id.mt_editText);
-        placeHolder = findViewById(R.id.mt_placeholder);
-        inputContainer = findViewById(R.id.inputContainer);
-        navIcon = findViewById(R.id.mt_nav);
-        mtSearchBlack = findViewById(R.id.mt_search_black);
-        findViewById(R.id.mt_clear).setOnClickListener(this);
-
-        //Listeners
-        setOnClickListener(this);
-        arrowIcon.setOnClickListener(this);
-        searchIcon.setOnClickListener(this);
-        searchEdit.setOnFocusChangeListener(this);
-        searchEdit.setOnEditorActionListener(this);
-        navIcon.setOnClickListener(this);
-        mtSearchBlack.setOnClickListener(this);
-
+        initListener();
         postSetup();
 
     }
 
-    /**
-     * Inflate menu for searchBar
-     *
-     * @param menuResource - menu resource
-     */
+    private void initListener() {
+        binding.imageViewClearSearch.setOnClickListener(this);
+        setOnClickListener(this);
+        binding.imageViewBackArrow.setOnClickListener(this);
+        binding.imageViewSearch.setOnClickListener(this);
+        binding.editTextSearch.setOnFocusChangeListener(this);
+        binding.editTextSearch.setOnEditorActionListener(this);
+        binding.imageViewCircleSearch.setOnClickListener(this);
+        binding.imageViewSearchBlack.setOnClickListener(this);
+    }
+
     public void inflateMenu(int menuResource) {
         inflateMenuRequest(menuResource, -1);
     }
 
-    /**
-     * Inflate menu for searchBar with custom Icon
-     *
-     * @param menuResource - menu resource
-     * @param icon         - icon resource id
-     */
     public void inflateMenu(int menuResource, int icon) {
         inflateMenuRequest(menuResource, icon);
     }
 
-    private void inflateMenuRequest(int menuResource, int iconResId
-    ) {
+    private void inflateMenuRequest(int menuResource, int iconResId) {
         int menuResource1 = menuResource;
         if (menuResource1 > 0) {
-            ImageView menuIcon = findViewById(R.id.mt_menu);
             if (iconResId != -1) {
                 menuIconRes = iconResId;
-                menuIcon.setImageResource(menuIconRes);
+                binding.imageViewMenu.setImageResource(menuIconRes);
             }
-            menuIcon.setVisibility(VISIBLE);
-            menuIcon.setOnClickListener(this);
-            popupMenu = new PopupMenu(getContext(), menuIcon);
+            binding.imageViewMenu.setVisibility(VISIBLE);
+            binding.imageViewMenu.setOnClickListener(this);
+            popupMenu = new PopupMenu(getContext(), binding.imageViewMenu);
             popupMenu.inflate(menuResource);
             popupMenu.setGravity(Gravity.RIGHT);
         }
     }
 
-    /**
-     * Get popup menu
-     *
-     * @return PopupMenu
-     */
     public PopupMenu getMenu() {
         return this.popupMenu;
     }
@@ -256,45 +219,38 @@ public class MaterialSearchBar extends FrameLayout implements View.OnClickListen
         setupSearchEditText();
     }
 
-    /**
-     * Capsule shaped searchbar enabled
-     * Only works on SDK V21+ due to odd behavior on lower
-     */
     private void setupRoundedSearchBarEnabled() {
         if (roundedSearchBarEnabled && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            searchBarCardView.setRadius(getResources().getDimension(R.dimen.corner_radius_rounded));
+            binding.searchbarCardview.setRadius(getResources().getDimension(R.dimen.corner_radius_rounded));
         } else {
-            searchBarCardView.setRadius(getResources().getDimension(R.dimen.corner_radius_default));
+            binding.searchbarCardview.setRadius(getResources().getDimension(R.dimen.corner_radius_default));
         }
     }
 
     private void setupSearchBarColor() {
-        searchBarCardView.setCardBackgroundColor(searchBarColor);
+        binding.searchbarCardview.setCardBackgroundColor(searchBarColor);
         setupDividerColor();
     }
 
     private void setupDividerColor() {
-        suggestionDivider.setBackgroundColor(dividerColor);
+        binding.viewDivider.setBackgroundColor(dividerColor);
     }
 
     private void setupTextColors() {
-        searchEdit.setHintTextColor(hintColor);
-        searchEdit.setTextColor(textColor);
-        placeHolder.setTextColor(placeholderColor);
+        binding.editTextSearch.setHintTextColor(hintColor);
+        binding.editTextSearch.setTextColor(textColor);
+        binding.textViewPlaceholder.setTextColor(placeholderColor);
     }
 
-    /**
-     * Setup editText coloring and drawables
-     */
     private void setupSearchEditText() {
         setupCursorColor();
-        searchEdit.setHighlightColor(highlightedTextColor);
+        binding.editTextSearch.setHighlightColor(highlightedTextColor);
 
         if (hintText != null)
-            searchEdit.setHint(hintText);
+            binding.editTextSearch.setHint(hintText);
         if (placeholderText != null) {
-            arrowIcon.setBackground(null);
-            placeHolder.setText(placeholderText);
+            binding.imageViewBackArrow.setBackground(null);
+            binding.textViewPlaceholder.setText(placeholderText);
         }
     }
 
@@ -302,11 +258,11 @@ public class MaterialSearchBar extends FrameLayout implements View.OnClickListen
         try {
             Field field = TextView.class.getDeclaredField("mEditor");
             field.setAccessible(true);
-            Object editor = field.get(searchEdit);
+            Object editor = field.get(binding.editTextSearch);
 
             field = TextView.class.getDeclaredField("mCursorDrawableRes");
             field.setAccessible(true);
-            int cursorDrawableRes = field.getInt(searchEdit);
+            int cursorDrawableRes = field.getInt(binding.editTextSearch);
             Drawable cursorDrawable = ContextCompat.getDrawable(getContext(), cursorDrawableRes).mutate();
             cursorDrawable.setColorFilter(textCursorColor, PorterDuff.Mode.SRC_IN);
             Drawable[] drawables = {cursorDrawable, cursorDrawable};
@@ -320,27 +276,24 @@ public class MaterialSearchBar extends FrameLayout implements View.OnClickListen
         }
     }
 
-    //Setup Icon Colors And Drawables
     private void setupIcons() {
-        //Drawables
-        //Animated Nav Icon
         navIconResId = R.drawable.ic_menu_animated;
-        this.navIcon.setImageResource(navIconResId);
+        this.binding.imageViewCircleSearch.setImageResource(navIconResId);
         setNavButtonEnabled(navButtonEnabled);
 
         //Menu
         if (popupMenu == null) {
-            findViewById(R.id.mt_menu).setVisibility(GONE);
+            binding.imageViewMenu.setVisibility(GONE);
         }
 
         //Search
         setSpeechMode(speechMode);
 
         //Arrow
-        this.arrowIcon.setImageResource(arrowIconRes);
+        this.binding.imageViewBackArrow.setImageResource(arrowIconRes);
 
         //Clear
-        this.clearIcon.setImageResource(clearIconRes);
+        this.binding.imageViewClearSearch.setImageResource(clearIconRes);
 
         //Colors
         setupNavIconTint();
@@ -353,41 +306,41 @@ public class MaterialSearchBar extends FrameLayout implements View.OnClickListen
 
     private void setupNavIconTint() {
         if (navIconTintEnabled) {
-            navIcon.setColorFilter(navIconTint, PorterDuff.Mode.SRC_IN);
+            binding.imageViewCircleSearch.setColorFilter(navIconTint, PorterDuff.Mode.SRC_IN);
         } else {
-            navIcon.clearColorFilter();
+            binding.imageViewCircleSearch.clearColorFilter();
         }
     }
 
     private void setupMenuIconTint() {
         if (menuIconTintEnabled) {
-            menuIcon.setColorFilter(menuIconTint, PorterDuff.Mode.SRC_IN);
+            binding.imageViewMenu.setColorFilter(menuIconTint, PorterDuff.Mode.SRC_IN);
         } else {
-            menuIcon.clearColorFilter();
+            binding.imageViewMenu.clearColorFilter();
         }
     }
 
     private void setupSearchIconTint() {
         if (searchIconTintEnabled) {
-            searchIcon.setColorFilter(searchIconTint, PorterDuff.Mode.SRC_IN);
+            binding.imageViewSearch.setColorFilter(searchIconTint, PorterDuff.Mode.SRC_IN);
         } else {
-            searchIcon.clearColorFilter();
+            binding.imageViewSearch.clearColorFilter();
         }
     }
 
     private void setupArrowIconTint() {
         if (arrowIconTintEnabled) {
-            arrowIcon.setColorFilter(arrowIconTint, PorterDuff.Mode.SRC_IN);
+            binding.imageViewBackArrow.setColorFilter(arrowIconTint, PorterDuff.Mode.SRC_IN);
         } else {
-            arrowIcon.clearColorFilter();
+            binding.imageViewBackArrow.clearColorFilter();
         }
     }
 
     private void setupClearIconTint() {
         if (clearIconTintEnabled) {
-            clearIcon.setColorFilter(clearIconTint, PorterDuff.Mode.SRC_IN);
+            binding.imageViewClearSearch.setColorFilter(clearIconTint, PorterDuff.Mode.SRC_IN);
         } else {
-            clearIcon.clearColorFilter();
+            binding.imageViewClearSearch.clearColorFilter();
         }
     }
 
@@ -399,54 +352,43 @@ public class MaterialSearchBar extends FrameLayout implements View.OnClickListen
             } else {
                 getContext().getTheme().resolveAttribute(android.R.attr.selectableItemBackground, rippleStyle, true);
             }
-            navIcon.setBackgroundResource(rippleStyle.resourceId);
-            searchIcon.setBackgroundResource(rippleStyle.resourceId);
-            menuIcon.setBackgroundResource(rippleStyle.resourceId);
-            arrowIcon.setBackgroundResource(rippleStyle.resourceId);
-            clearIcon.setBackgroundResource(rippleStyle.resourceId);
+            binding.imageViewCircleSearch.setBackgroundResource(rippleStyle.resourceId);
+            binding.imageViewSearch.setBackgroundResource(rippleStyle.resourceId);
+            binding.imageViewMenu.setBackgroundResource(rippleStyle.resourceId);
+            binding.imageViewBackArrow.setBackgroundResource(rippleStyle.resourceId);
+            binding.imageViewClearSearch.setBackgroundResource(rippleStyle.resourceId);
         } else {
             Log.w(TAG, "setupIconRippleStyle() Only Available On SDK Versions Higher Than 16!");
         }
     }
 
-    /**
-     * Register listener for search bar callbacks.
-     *
-     * @param onSearchActionListener the callback listener
-     */
     public void setOnSearchActionListener(OnSearchActionListener onSearchActionListener) {
         this.onSearchActionListener = onSearchActionListener;
     }
 
-    /**
-     * Hides search input and close arrow
-     */
     public void closeSearch() {
         animateNavIcon(false);
         searchOpened = false;
         Animation out = AnimationUtils.loadAnimation(getContext(), R.anim.fade_out);
         Animation in = AnimationUtils.loadAnimation(getContext(), R.anim.fade_in_right);
         out.setAnimationListener(this);
-        searchIcon.setVisibility(VISIBLE);
-        inputContainer.startAnimation(out);
-        searchIcon.startAnimation(in);
+        binding.imageViewSearch.setVisibility(VISIBLE);
+        binding.searchOpenContainer.startAnimation(out);
+        binding.imageViewSearch.startAnimation(in);
 
         if (placeholderText != null) {
-            placeHolder.setVisibility(VISIBLE);
-            placeHolder.startAnimation(in);
+            binding.textViewPlaceholder.setVisibility(VISIBLE);
+            binding.textViewPlaceholder.startAnimation(in);
         }
         if (listenerExists())
             onSearchActionListener.onSearchStateChanged(false);
         if (suggestionsVisible) animateSuggestions(getListHeight(false), 0);
     }
 
-    /**
-     * Shows search input and close arrow
-     */
     public void openSearch() {
         if (isSearchOpened()) {
             onSearchActionListener.onSearchStateChanged(true);
-            searchEdit.requestFocus();
+            binding.editTextSearch.requestFocus();
             return;
         }
         animateNavIcon(true);
@@ -455,22 +397,22 @@ public class MaterialSearchBar extends FrameLayout implements View.OnClickListen
         Animation left_in = AnimationUtils.loadAnimation(getContext(), R.anim.fade_in_left);
         Animation left_out = AnimationUtils.loadAnimation(getContext(), R.anim.fade_out_left);
         left_in.setAnimationListener(this);
-        placeHolder.setVisibility(GONE);
-        inputContainer.setVisibility(VISIBLE);
-        inputContainer.startAnimation(left_in);
+        binding.textViewPlaceholder.setVisibility(GONE);
+        binding.searchOpenContainer.setVisibility(VISIBLE);
+        binding.searchOpenContainer.startAnimation(left_in);
         if (listenerExists()) {
             onSearchActionListener.onSearchStateChanged(true);
         }
-        searchIcon.startAnimation(left_out);
+        binding.imageViewSearch.startAnimation(left_out);
     }
 
     private void animateNavIcon(boolean menuState) {
         if (menuState) {
-            this.navIcon.setImageResource(R.drawable.ic_menu_animated);
+            this.binding.imageViewCircleSearch.setImageResource(R.drawable.ic_menu_animated);
         } else {
-            this.navIcon.setImageResource(R.drawable.ic_back_animated);
+            this.binding.imageViewCircleSearch.setImageResource(R.drawable.ic_back_animated);
         }
-        Drawable mDrawable = navIcon.getDrawable();
+        Drawable mDrawable = binding.imageViewCircleSearch.getDrawable();
         if (mDrawable instanceof Animatable) {
             ((Animatable) mDrawable).start();
         }
@@ -482,7 +424,7 @@ public class MaterialSearchBar extends FrameLayout implements View.OnClickListen
         final ViewGroup.LayoutParams lp = suggestionsList.getLayoutParams();
         if (to == 0 && lp.height == 0)
             return;
-        findViewById(R.id.mt_divider).setVisibility(to > 0 ? View.VISIBLE : View.GONE);
+        binding.viewDivider.setVisibility(to > 0 ? View.VISIBLE : View.GONE);
 
         ValueAnimator animator = ValueAnimator.ofInt(from, to);
         animator.setDuration(1200);
@@ -511,244 +453,133 @@ public class MaterialSearchBar extends FrameLayout implements View.OnClickListen
         adapter.clearSuggestions();
     }
 
-    /**
-     * Check if suggestions are shown
-     *
-     * @return return result
-     */
+    public void showLoading(Boolean showLoading) {
+        if (showLoading) {
+            binding.imageViewClearSearch.setVisibility(GONE);
+            binding.progressbar.setVisibility(VISIBLE);
+        } else {
+            binding.imageViewClearSearch.setVisibility(VISIBLE);
+            binding.progressbar.setVisibility(GONE);
+
+        }
+    }
+
     public boolean isSuggestionsVisible() {
         return suggestionsVisible;
     }
 
-    /**
-     * Check if suggestions are enabled
-     */
     public boolean isSuggestionsEnabled() {
         return isSuggestionsEnabled;
     }
 
-    /**
-     * Set suggestions enabled
-     */
     public void setSuggestionsEnabled(boolean suggestionsEnabled) {
         isSuggestionsEnabled = suggestionsEnabled;
     }
 
-    /**
-     * Set Menu Icon Drawable
-     *
-     * @param menuIconResId icon resource id
-     */
     public void setMenuIcon(int menuIconResId) {
         this.menuIconRes = menuIconResId;
-        this.menuIcon.setImageResource(this.menuIconRes);
+        this.binding.imageViewMenu.setImageResource(this.menuIconRes);
     }
 
-    /**
-     * Set search icon drawable
-     *
-     * @param searchIconResId icon resource id
-     */
     public void setSearchIcon(int searchIconResId) {
         this.searchIconRes = searchIconResId;
-        this.searchIcon.setImageResource(searchIconResId);
+        this.binding.imageViewSearch.setImageResource(searchIconResId);
     }
 
-    /**
-     * Set back arrow icon drawable
-     *
-     * @param arrowIconResId icon resource id
-     */
     public void setArrowIcon(int arrowIconResId) {
         this.arrowIconRes = arrowIconResId;
-        this.arrowIcon.setImageResource(arrowIconRes);
+        this.binding.imageViewBackArrow.setImageResource(arrowIconRes);
     }
 
-    /**
-     * Set clear icon drawable
-     *
-     * @param clearIconResId icon resource id
-     */
     public void setClearIcon(int clearIconResId) {
         this.clearIconRes = clearIconResId;
-        this.clearIcon.setImageResource(clearIconRes);
+        this.binding.imageViewClearSearch.setImageResource(clearIconRes);
     }
 
-    /**
-     * Set the tint color of the navigation icon
-     *
-     * @param navIconTint nav icon color
-     */
     public void setNavIconTint(int navIconTint) {
         this.navIconTint = navIconTint;
         setupNavIconTint();
     }
 
-    /**
-     * Set the tint color of the menu icon
-     *
-     * @param menuIconTint menu icon color
-     */
     public void setMenuIconTint(int menuIconTint) {
         this.menuIconTint = menuIconTint;
         setupMenuIconTint();
     }
 
-    /**
-     * Set the tint color of the search/speech icon
-     *
-     * @param searchIconTint search icon color
-     */
     public void setSearchIconTint(int searchIconTint) {
         this.searchIconTint = searchIconTint;
         setupSearchIconTint();
     }
 
-    /**
-     * Set the tint color of the back arrow icon
-     *
-     * @param arrowIconTint arrow icon color
-     */
     public void setArrowIconTint(int arrowIconTint) {
         this.arrowIconTint = arrowIconTint;
         setupArrowIconTint();
     }
 
-    /**
-     * Set the tint color of the clear icon
-     *
-     * @param clearIconTint clear icon tint
-     */
     public void setClearIconTint(int clearIconTint) {
         this.clearIconTint = clearIconTint;
         setupClearIconTint();
     }
 
-    /**
-     * Show a borderless ripple(circular) when icon is pressed
-     * Borderless only available on SDK V21+
-     *
-     * @param borderlessRippleEnabled true for borderless, false for default
-     */
     public void setIconRippleStyle(boolean borderlessRippleEnabled) {
         this.borderlessRippleEnabled = borderlessRippleEnabled;
         setupIconRippleStyle();
     }
 
-    /**
-     * Sets search bar hintText
-     *
-     * @param hintText hintText text
-     */
     public void setHint(CharSequence hintText) {
         this.hintText = hintText;
-        searchEdit.setHint(hintText);
+        binding.editTextSearch.setHint(hintText);
     }
 
-    /**
-     * Set the place holder text
-     *
-     * @return placeholder text
-     */
     public CharSequence getPlaceHolderText() {
-        return placeHolder.getText();
+        return binding.textViewPlaceholder.getText();
     }
 
-    /**
-     * sets the speechMode for the search bar.
-     * If set to true, microphone icon will display instead of the search icon.
-     * Also clicking on this icon will trigger the callback method onButtonClicked()
-     *
-     * @param speechMode enable speech
-     * @see #BUTTON_SPEECH
-     * @see OnSearchActionListener#onButtonClicked(int)
-     */
     public void setSpeechMode(boolean speechMode) {
         this.speechMode = speechMode;
         if (speechMode) {
-            searchIcon.setImageResource(speechIconRes);
-            searchIcon.setClickable(true);
+            binding.imageViewSearch.setImageResource(speechIconRes);
+            binding.imageViewSearch.setClickable(true);
         } else {
-            searchIcon.setImageResource(searchIconRes);
-            searchIcon.setClickable(false);
+            binding.imageViewSearch.setImageResource(searchIconRes);
+            binding.imageViewSearch.setClickable(false);
         }
     }
 
-    /**
-     * True if MaterialSearchBar is in speech mode
-     *
-     * @return speech mode
-     */
     public boolean isSpeechModeEnabled() {
         return speechMode;
     }
 
-    /**
-     * Check if search bar is in edit mode
-     *
-     * @return true if search bar is in edit mode
-     */
     public boolean isSearchOpened() {
         return searchOpened;
     }
 
-    /**
-     * Specifies the maximum number of search queries stored until the activity is destroyed
-     *
-     * @param maxSuggestionsCount maximum queries
-     */
     public void setMaxSuggestionCount(int maxSuggestionsCount) {
         this.maxSuggestionCount = maxSuggestionsCount;
         adapter.setMaxSuggestionsCount(maxSuggestionsCount);
     }
 
-    /**
-     * Sets a custom adapter for suggestions list view.
-     *
-     * @param suggestionAdapter customized adapter
-     */
     public void setCustomSuggestionAdapter(SuggestionsAdapter suggestionAdapter) {
         this.adapter = suggestionAdapter;
         RecyclerView recyclerView = findViewById(R.id.mt_recycler);
         recyclerView.setAdapter(adapter);
     }
 
-    /**
-     * Returns the last search queries.
-     * The queries are stored only for the duration of one activity session.
-     * When the activity is destroyed, the queries will be deleted.
-     * To save queries, use the method getLastSuggestions().
-     * To recover the queries use the method setLastSuggestions().
-     * <p><b color="red">List< String >  will be returned if You don't use custom adapter.</b></p>
-     *
-     * @return array with the latest search queries
-     * @see #setLastSuggestions(List)
-     * @see #setMaxSuggestionCount(int)
-     */
     public List getLastSuggestions() {
         return adapter.getSuggestions();
     }
 
-    /**
-     * Sets the array of recent search queries.
-     * It is advisable to save the queries when the activity is destroyed
-     * and call this method when creating the activity.
-     * <p><b color="red">Pass a List< String > if You don't use custom adapter.</b></p>
-     *
-     * @param suggestions an array of queries
-     * @see #getLastSuggestions()
-     * @see #setMaxSuggestionCount(int)
-     */
+
     public void setLastSuggestions(List suggestions) {
         adapter.setSuggestions(suggestions);
     }
 
-    /**
-     * Changes the array of recent search queries with animation.
-     * <p><b color="red">Pass a List< String >  if You don't use custom adapter.</b></p>
-     *
-     * @param suggestions an array of queries
-     */
+    public void setLastSuggestions(List suggestions, List descriptions, List urls) {
+        adapter.setSuggestions(suggestions);
+        adapter.setdescriptions(descriptions);
+        adapter.setUrls(urls);
+    }
+
     public void updateLastSuggestions(List suggestions) {
         int startHeight = getListHeight(false);
         if (suggestions.size() > 0) {
@@ -760,55 +591,29 @@ public class MaterialSearchBar extends FrameLayout implements View.OnClickListen
         }
     }
 
-    /**
-     * Allows you to intercept the suggestions click event
-     * <p><b color="red">This method will not work with custom Suggestion Adapter</b></p>
-     *
-     * @param listener click listener
-     */
     public void setSuggestionsClickListener(SuggestionsAdapter.OnItemViewClickListener listener) {
         if (adapter instanceof DefaultSuggestionsAdapter)
             ((DefaultSuggestionsAdapter) adapter).setListener(listener);
     }
 
-    /**
-     * Set search input text color
-     *
-     * @param textColor text color
-     */
     public void setTextColor(int textColor) {
         this.textColor = textColor;
         setupTextColors();
     }
 
-    /**
-     * Set text input hintText color
-     *
-     * @param hintColor text hintText color
-     */
     public void setTextHintColor(int hintColor) {
         this.hintColor = hintColor;
         setupTextColors();
     }
 
-    /**
-     * Set placeholder text color
-     *
-     * @param placeholderColor placeholder color
-     */
     public void setPlaceHolderColor(int placeholderColor) {
         this.placeholderColor = placeholderColor;
         setupTextColors();
     }
 
-    /**
-     * Set the color of the highlight when text is selected
-     *
-     * @param highlightedTextColor selected text highlight color
-     */
     public void setTextHighlightColor(int highlightedTextColor) {
         this.highlightedTextColor = highlightedTextColor;
-        searchEdit.setHighlightColor(highlightedTextColor);
+        binding.editTextSearch.setHighlightColor(highlightedTextColor);
     }
 
     public void setDividerColor(int dividerColor) {
@@ -816,91 +621,54 @@ public class MaterialSearchBar extends FrameLayout implements View.OnClickListen
         setupDividerColor();
     }
 
-    /**
-     * Set navigation drawer menu icon enabled
-     *
-     * @param navButtonEnabled icon enabled
-     */
     public void setNavButtonEnabled(boolean navButtonEnabled) {
         this.navButtonEnabled = navButtonEnabled;
         if (navButtonEnabled) {
-            navIcon.setVisibility(VISIBLE);
-            navIcon.setClickable(true);
-            arrowIcon.setVisibility(GONE);
+            binding.imageViewCircleSearch.setVisibility(VISIBLE);
+            binding.imageViewCircleSearch.setClickable(true);
+            binding.imageViewBackArrow.setVisibility(GONE);
         } else {
-            navIcon.setVisibility(GONE);
-            navIcon.setClickable(false);
-            arrowIcon.setVisibility(VISIBLE);
+            binding.imageViewCircleSearch.setVisibility(GONE);
+            binding.imageViewCircleSearch.setClickable(false);
+            binding.imageViewBackArrow.setVisibility(VISIBLE);
         }
-        navIcon.requestLayout();
-        placeHolder.requestLayout();
-        arrowIcon.requestLayout();
+        binding.imageViewCircleSearch.requestLayout();
+        binding.textViewPlaceholder.requestLayout();
+        binding.imageViewBackArrow.requestLayout();
     }
 
-    /**
-     * Enable capsule shaped SearchBar (API 21+)
-     *
-     * @param roundedSearchBarEnabled capsule shape enabled
-     * @
-     */
     public void setRoundedSearchBarEnabled(boolean roundedSearchBarEnabled) {
         this.roundedSearchBarEnabled = roundedSearchBarEnabled;
         setupRoundedSearchBarEnabled();
     }
 
-    /**
-     * Set CardView elevation
-     *
-     * @param elevation desired elevation
-     */
     public void setCardViewElevation(int elevation) {
-        CardView cardView = findViewById(R.id.mt_container);
-        cardView.setCardElevation(elevation);
+        binding.searchbarCardview.setCardElevation(elevation);
     }
 
-    /**
-     * Get search text
-     *
-     * @return text
-     */
     public String getText() {
-        return searchEdit.getText().toString();
+        return binding.editTextSearch.getText().toString();
     }
 
-    /**
-     * Set search text
-     *
-     * @param text text
-     */
     public void setText(String text) {
-        searchEdit.setText(text);
+        binding.editTextSearch.setText(text);
     }
 
-    /**
-     * Add text watcher to searchbar's EditText
-     *
-     * @param textWatcher textWatcher to add
-     */
     public void addTextChangeListener(TextWatcher textWatcher) {
-        searchEdit.addTextChangedListener(textWatcher);
+        binding.editTextSearch.addTextChangedListener(textWatcher);
     }
 
     public EditText getSearchEditText() {
-        return searchEdit;
+        return binding.editTextSearch;
     }
 
     public TextView getPlaceHolderView() {
-        return placeHolder;
+        return binding.textViewPlaceholder;
     }
 
-    /**
-     * Set the place holder text
-     *
-     * @param placeholder placeholder text
-     */
     public void setPlaceHolder(CharSequence placeholder) {
         this.placeholderText = placeholder;
-        placeHolder.setText(placeholder);
+        binding.textViewPlaceholder.setText(placeholder);
     }
 
     private boolean listenerExists() {
@@ -914,16 +682,16 @@ public class MaterialSearchBar extends FrameLayout implements View.OnClickListen
             if (!searchOpened) {
                 openSearch();
             }
-        } else if (id == R.id.mt_arrow) {
+        } else if (id == R.id.imageView_back_arrow) {
             closeSearch();
-        } else if (id == R.id.mt_search) {
+        } else if (id == R.id.imageView_search) {
             if (listenerExists())
                 onSearchActionListener.onButtonClicked(BUTTON_SPEECH);
-        } else if (id == R.id.mt_clear) {
-            searchEdit.setText("");
-        } else if (id == R.id.mt_menu) {
+        } else if (id == R.id.imageView_clear_search) {
+            binding.editTextSearch.setText("");
+        } else if (id == R.id.imageView_menu) {
             popupMenu.show();
-        } else if (id == R.id.mt_nav) {
+        } else if (id == R.id.imageView_circle_search) {
             int button = searchOpened ? BUTTON_BACK : BUTTON_NAVIGATION;
             if (searchOpened) {
                 closeSearch();
@@ -932,27 +700,20 @@ public class MaterialSearchBar extends FrameLayout implements View.OnClickListen
                 onSearchActionListener.onButtonClicked(button);
             }
         }
-//        else if (id==R.id.mt_search_black){
-//            onSearchBlackClicked();
-//        }
     }
 
     @Override
     public void onAnimationStart(Animation animation) {
     }
 
-//    public void onSearchBlackClicked(View.OnClickListener()) {
-//        mtSearchBlack.setOnClickListener(this);
-//    }
-
     @Override
     public void onAnimationEnd(Animation animation) {
         if (!searchOpened) {
-            inputContainer.setVisibility(GONE);
-            searchEdit.setText("");
+            binding.searchOpenContainer.setVisibility(GONE);
+            // searchEdit.setText("");
         } else {
-            searchIcon.setVisibility(GONE);
-            searchEdit.requestFocus();
+            binding.imageViewSearch.setVisibility(GONE);
+            binding.editTextSearch.requestFocus();
             if (!suggestionsVisible && isSuggestionsEnabled)
                 showSuggestionsList();
         }
@@ -976,21 +737,14 @@ public class MaterialSearchBar extends FrameLayout implements View.OnClickListen
     @Override
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
         if (listenerExists())
-            onSearchActionListener.onSearchConfirmed(searchEdit.getText());
+            onSearchActionListener.onSearchConfirmed(binding.editTextSearch.getText());
         if (suggestionsVisible)
             hideSuggestionsList();
         if (adapter instanceof DefaultSuggestionsAdapter)
-            adapter.addSuggestion(searchEdit.getText().toString());
+            adapter.addSuggestion(binding.editTextSearch.getText().toString());
         return true;
     }
 
-    /**
-     * For calculate the height change when item delete or add animation
-     * false is return the full height of item,
-     * true is return the height of position subtraction one
-     *
-     * @param isSubtraction is subtraction enabled
-     */
     private int getListHeight(boolean isSubtraction) {
         if (!isSubtraction)
             return (int) (adapter.getListHeight() * destiny);
@@ -1000,7 +754,7 @@ public class MaterialSearchBar extends FrameLayout implements View.OnClickListen
     @Override
     public void OnItemClickListener(int position, View v) {
         if (v.getTag() instanceof String) {
-            searchEdit.setText((String) v.getTag());
+            binding.editTextSearch.setText((String) v.getTag());
         }
     }
 
@@ -1038,9 +792,9 @@ public class MaterialSearchBar extends FrameLayout implements View.OnClickListen
         if (suggestionsVisible)
             animateSuggestions(0, getListHeight(false));
         if (searchOpened) {
-            inputContainer.setVisibility(VISIBLE);
-            placeHolder.setVisibility(GONE);
-            searchIcon.setVisibility(GONE);
+            binding.searchOpenContainer.setVisibility(VISIBLE);
+            binding.textViewPlaceholder.setVisibility(GONE);
+            binding.imageViewSearch.setVisibility(GONE);
         }
     }
 
@@ -1054,29 +808,11 @@ public class MaterialSearchBar extends FrameLayout implements View.OnClickListen
         return super.dispatchKeyEvent(event);
     }
 
-    /**
-     * Interface definition for MaterialSearchBar callbacks.
-     */
     public interface OnSearchActionListener {
-        /**
-         * Invoked when SearchBar opened or closed
-         *
-         * @param enabled state
-         */
         void onSearchStateChanged(boolean enabled);
 
-        /**
-         * Invoked when search confirmed and "search" button is clicked on the soft keyboard
-         *
-         * @param text search input
-         */
         void onSearchConfirmed(CharSequence text);
 
-        /**
-         * Invoked when "speech" or "navigation" buttons clicked.
-         *
-         * @param buttonCode {@link #BUTTON_NAVIGATION}, {@link #BUTTON_SPEECH} or {@link #BUTTON_BACK} will be passed
-         */
         void onButtonClicked(int buttonCode);
     }
 
@@ -1106,7 +842,6 @@ public class MaterialSearchBar extends FrameLayout implements View.OnClickListen
             isSearchBarVisible = source.readInt();
             suggestionsVisible = source.readInt();
             speechMode = source.readInt();
-
             navIconResId = source.readInt();
             searchIconRes = source.readInt();
             hint = source.readString();

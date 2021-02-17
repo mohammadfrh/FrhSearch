@@ -11,14 +11,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Create this adapter to customize the suggestions list of the MaterialSearchBar
- * @param <S> type of your suggestions model
- * @param <V> viewholder
- */
 public abstract class SuggestionsAdapter<S, V extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<V> implements Filterable {
 
     protected List<S> suggestions = new ArrayList<>();
+    protected List<S> descriptions = new ArrayList<>();
+    protected List<S> urls = new ArrayList<>();
     protected List<S> suggestions_clone = new ArrayList<>();
     private final LayoutInflater inflater;
     protected int maxSuggestionsCount = 5;
@@ -53,6 +50,14 @@ public abstract class SuggestionsAdapter<S, V extends RecyclerView.ViewHolder> e
         notifyDataSetChanged();
     }
 
+    public void setdescriptions(List<S> descriptions) {
+        this.descriptions = descriptions;
+    }
+
+    public void setUrls(List<S> urls) {
+        this.urls = urls;
+    }
+
     public void clearSuggestions() {
         suggestions.clear();
         suggestions_clone = suggestions;
@@ -62,7 +67,6 @@ public abstract class SuggestionsAdapter<S, V extends RecyclerView.ViewHolder> e
     public void deleteSuggestion(int position, S r) {
         if(r == null)
             return;
-        //delete item with animation
         if(suggestions.contains(r))
         {
             this.notifyItemRemoved(position);
@@ -73,6 +77,14 @@ public abstract class SuggestionsAdapter<S, V extends RecyclerView.ViewHolder> e
 
     public List<S> getSuggestions() {
         return suggestions;
+    }
+
+    public List<S> getDescriptions() {
+        return descriptions;
+    }
+
+    public List<S> getUrls() {
+        return urls;
     }
 
     public int getMaxSuggestionsCount() {
@@ -94,15 +106,10 @@ public abstract class SuggestionsAdapter<S, V extends RecyclerView.ViewHolder> e
 
     public abstract void onBindSuggestionHolder(S suggestion, V holder, int position);
 
-    /**
-     * Returns the height of single view item in list.
-     * <b>Note that all views must have the same height</b>
-     * @return height
-     */
     public abstract int getSingleViewHeight();
 
     public int getListHeight(){
-        return getItemCount() * getSingleViewHeight();
+        return getItemCount() * getSingleViewHeight() * 2;
     }
 
     @Override
@@ -110,15 +117,6 @@ public abstract class SuggestionsAdapter<S, V extends RecyclerView.ViewHolder> e
         return suggestions.size();
     }
 
-    /**
-     * <p>Returns a filter that can be used to constrain data with a filtering
-     * pattern.</p>
-     * <p>
-     * <p>This method is usually implemented by {@link Adapter}
-     * classes.</p>
-     *
-     * @return a filter used to constrain data
-     */
     @Override
     public Filter getFilter() {
         return null;
