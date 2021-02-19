@@ -2,7 +2,6 @@ package com.frh.searchlibrary;
 
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Adapter;
 import android.widget.Filter;
 import android.widget.Filterable;
 
@@ -46,6 +45,9 @@ public abstract class SuggestionsAdapter<S, V extends RecyclerView.ViewHolder> e
 
     public void setSuggestions(List<S> suggestions) {
         this.suggestions = suggestions;
+        if (suggestions.size() > maxSuggestionsCount) {
+            suggestions.remove(maxSuggestionsCount - 1);
+        }
         suggestions_clone = suggestions;
         notifyDataSetChanged();
     }

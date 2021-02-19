@@ -570,14 +570,20 @@ public class MaterialSearchBar extends FrameLayout implements View.OnClickListen
     }
 
 
-    public void setLastSuggestions(List suggestions) {
-        adapter.setSuggestions(suggestions);
-    }
+//    public void setLastSuggestions(List suggestions) {
+//        adapter.setSuggestions(suggestions);
+//    }
 
     public void setLastSuggestions(List suggestions, List descriptions, List urls) {
         adapter.setSuggestions(suggestions);
         adapter.setdescriptions(descriptions);
         adapter.setUrls(urls);
+    }
+
+    public void setLastSuggestions( ModelDto models) {
+        adapter.setSuggestions(models.getTitle());
+        adapter.setdescriptions(models.getDescription());
+        adapter.setUrls(models.getUrls());
     }
 
     public void updateLastSuggestions(List suggestions) {
@@ -788,7 +794,7 @@ public class MaterialSearchBar extends FrameLayout implements View.OnClickListen
         super.onRestoreInstanceState(savedState.getSuperState());
         searchOpened = savedState.isSearchBarVisible == VIEW_VISIBLE;
         suggestionsVisible = savedState.suggestionsVisible == VIEW_VISIBLE;
-        setLastSuggestions(savedState.suggestions);
+        //setLastSuggestions(savedState.suggestions);
         if (suggestionsVisible)
             animateSuggestions(0, getListHeight(false));
         if (searchOpened) {
